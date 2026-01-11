@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Issues Blog</title>
+
+  <!-- Markdown renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./styles.css">
+
+  <!-- App -->
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="brand" href="#/" aria-label="Home" onclick="location.hash='#/'">
+        <div class="brand-logo">B</div>
+        <div class="brand-text">
+          <div class="brand-title">Issues Blog</div>
+          <div class="brand-sub">Write posts as GitHub issues</div>
+        </div>
+      </a>
+
+      <div class="top-actions">
+        <button id="themeToggle" class="btn small">Toggle</button>
+      </div>
+    </header>
+
+    <main id="app" class="main"></main>
+
+    <footer class="footer">
+      <div>Built with GitHub Issues • Images and Markdown supported</div>
+    </footer>
+  </div>
+
+
+</body>
+</html>
