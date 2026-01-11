@@ -179,26 +179,27 @@ async function renderPost(number) {
 
 /* ========== COMMENTS (giscus) ========== */
 function injectGiscus() {
-  if (!GISCUS_REPO || !GISCUS_REPO_ID || !GISCUS_CATEGORY || !GISCUS_CATEGORY_ID) return;
-
   const container = document.getElementById("comments");
-  container.innerHTML = "";
-
-  const script = document.createElement("script");
-  script.src = "https://giscus.app/client.js";
-  script.async = true;
-  script.setAttribute("data-repo", GISCUS_REPO);
-  script.setAttribute("data-repo-id", GISCUS_REPO_ID);
-  script.setAttribute("data-category", GISCUS_CATEGORY);
-  script.setAttribute("data-category-id", GISCUS_CATEGORY_ID);
-  script.setAttribute("data-mapping", GISCUS_MAPPING);
-  script.setAttribute("data-reactions-enabled", "1");
-  script.setAttribute("data-emit-metadata", "0");
-  script.setAttribute("data-theme", document.body.classList.contains("dark") ? "dark" : "light");
-  script.crossOrigin = "anonymous";
-
-  container.appendChild(script);
+  container.innerHTML = `
+    <script src="https://giscus.app/client.js"
+            data-repo="TheRealDuckers/blog.duckers.dev"
+            data-repo-id="R_kgDOQ3vjAA"
+            data-category-id="DIC_kwDOQ3vjAM4C01AL"
+            data-mapping="specific"
+            data-term="Comments"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="catppuccin_latte"
+            data-lang="en"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async>
+    </script>
+  `;
 }
+
 
 /* ========== DATA ========== */
 async function fetchIssues(page = 1, label = null) {
