@@ -8,8 +8,8 @@
 
 /* ========== CONFIG ========== */
 // Replace these with your repo
-const OWNER = "YOUR_GITHUB_USERNAME";
-const REPO  = "YOUR_REPO_NAME";
+const OWNER = "TheRealDuckers";
+const REPO  = "blog.duckers.dev";
 
 // Pagination: issues per page
 const PER_PAGE = 6;
