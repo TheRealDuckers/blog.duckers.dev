@@ -115,3 +115,25 @@ body{
   .hero h1{font-size:1.05rem}
   .search{font-size:1rem;padding:.65rem .7rem}
 }
+
+/* Avatar container */
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  flex: 0 0 96px;
+  box-shadow: 0 8px 20px rgba(18,147,136,0.12);
+  background: linear-gradient(135deg, #25B352, #30CE4C);
+  border: 3px solid rgba(255,255,255,0.6);
+}
+
+/* Image fills the circle and keeps aspect ratio */
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
