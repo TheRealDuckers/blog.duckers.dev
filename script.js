@@ -114,7 +114,7 @@ async function renderPosts() {
 
     <div style="margin-top:1rem">
       ${filtered.length ? filtered.map(p => `
-        <a class="post-link" href="#/posts/${p.number}">
+        <a style="text-decoration: none;" class="post-link" href="#/posts/${p.number}">
           <article class="card">
             <h3>${escapeHtml(p.title)}</h3>
             <div class="muted">#${p.number} • ${isoToDate(p.created_at)} • ${p.labels.map(lb => escapeHtml(lb.name)).join(", ")}</div>
@@ -244,4 +244,5 @@ themeToggle.addEventListener("click", () => {
 /* ========== INIT ========== */
 window.addEventListener("hashchange", router);
 router();
+
 
