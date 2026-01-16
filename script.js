@@ -65,9 +65,9 @@ async function renderHome() {
     </section>
 
     <h2 style="margin:.6rem 0">Latest posts</h2>
-    <div style="text-decoration: none;" class="grid">
+    <div  class="grid">
       ${latest.map(p => `
-        <a class="post-link" href="#/posts/${p.number}">
+        <a style="text-decoration: none;" class="post-link" href="#/posts/${p.number}">
           <article class="card">
             <h3>${escapeHtml(p.title)}</h3>
             <div class="muted">#${p.number} • ${isoToDate(p.created_at)}</div>
@@ -244,5 +244,6 @@ themeToggle.addEventListener("click", () => {
 /* ========== INIT ========== */
 window.addEventListener("hashchange", router);
 router();
+
 
 
