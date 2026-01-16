@@ -65,7 +65,7 @@ async function renderHome() {
     </section>
 
     <h2 style="margin:.6rem 0">Latest posts</h2>
-    <div class="grid">
+    <div style="text-decoration: none;" class="grid">
       ${latest.map(p => `
         <a class="post-link" href="#/posts/${p.number}">
           <article class="card">
@@ -244,3 +244,4 @@ themeToggle.addEventListener("click", () => {
 /* ========== INIT ========== */
 window.addEventListener("hashchange", router);
 router();
+
