@@ -6,7 +6,7 @@ const OWNER = "TheRealDuckers";
 const REPO  = "blog.duckers.dev";
 
 // Pagination: issues per page
-const PER_PAGE = 6;
+const PER_PAGE = 20;
 
 // Optional: set a GitHub token string here to avoid rate limits during development
 const GITHUB_TOKEN = null;
@@ -50,7 +50,7 @@ const appEl = document.getElementById("app");
 
 async function renderHome() {
   const issues = await fetchIssues(1, state.label);
-  const latest = issues.slice(0, 3);
+  const latest = issues.slice(0, 10);
 
   appEl.innerHTML = `
     <section class="hero" role="banner">
@@ -244,6 +244,7 @@ themeToggle.addEventListener("click", () => {
 /* ========== INIT ========== */
 window.addEventListener("hashchange", router);
 router();
+
 
 
 
