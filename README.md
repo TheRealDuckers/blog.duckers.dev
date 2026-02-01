@@ -1,4 +1,4 @@
-So, basically, this grabs issues and displays them as blog posts. no backend, no tokens, just pure posts. (although you can add tokens if you want)
+So, basically, this grabs issues and displays them as blog posts. no backend, no tokens, just pure posts. (although you can add tokens if you want) (so actually, there may be tokens) (hmmmm) (this is awkward....)
 
 to use:
 
