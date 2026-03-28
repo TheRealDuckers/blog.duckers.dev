@@ -19,7 +19,8 @@ const state = {
   loading: true,
   error: null,
   user: null,
-  token: null
+  token: null,
+  username: null
 };
 
 function initProfile() {
@@ -351,103 +352,73 @@ function updatePublishButton() {
   document.getElementById('publish-btn').disabled = !title || !content;
 }
 
-let authInterval = null;
-
 function openLoginModal() {
   document.getElementById('login-modal').classList.add('active');
+  document.getElementById('pat-input').value = '';
+  document.getElementById('login-error').style.display = 'none';
 }
 
 function closeLoginModal() {
   document.getElementById('login-modal').classList.remove('active');
-  if (authInterval) {
-    clearInterval(authInterval);
-    authInterval = null;
-  }
-  document.getElementById('login-status').textContent = 'Waiting for authorization...';
 }
 
-async function startOAuthFlow() {
+async function verifyPat(token) {
   try {
-    const codeResponse = await fetch('https://github.com/login/device/code', {
-      method: 'POST',
+    const response = await fetch('https://api.github.com/user', {
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        client_id: GITHUB_CLIENT_ID,
-        scope: 'repo'
-      })
-    });
-    
-    const codeData = await codeResponse.json();
-    console.log('Device code response:', codeData);
-    
-    if (codeData.error) {
-      showToast(codeData.error_description || 'Auth error', 'error');
-      return;
-    }
-    
-    document.getElementById('device-code').textContent = codeData.user_code;
-    document.getElementById('login-status').textContent = 'Waiting for authorization...';
-    openLoginModal();
-    
-    const pollInterval = (codeData.interval || 5) * 1000;
-    
-    authInterval = setInterval(async () => {
-      try {
-        const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            client_id: GITHUB_CLIENT_ID,
-            device_code: codeData.device_code,
-            grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
-          })
-        });
-        
-        const tokenData = await tokenResponse.json();
-        console.log('Token response:', tokenData);
-        
-        if (tokenData.error === 'authorization_pending') {
-          return;
-        }
-        
-        clearInterval(authInterval);
-        authInterval = null;
-        
-        if (tokenData.access_token) {
-          state.token = tokenData.access_token;
-          localStorage.setItem('gh_token', tokenData.access_token);
-          
-          const userResponse = await fetch('https://api.github.com/user', {
-            headers: {
-              'Authorization': `Bearer ${tokenData.access_token}`,
-              'Accept': 'application/vnd.github.v3+json'
-            }
-          });
-          
-          state.user = await userResponse.json();
-          localStorage.setItem('gh_user', JSON.stringify(state.user));
-          closeLoginModal();
-          renderUserSection();
-          showToast(`Welcome, ${state.user.login}!`, 'success');
-        } else {
-          document.getElementById('login-status').textContent = tokenData.error_description || 'Authorization failed';
-          showToast(tokenData.error_description || 'Auth failed', 'error');
-        }
-      } catch (e) {
-        console.error('Poll error:', e);
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
       }
-    }, pollInterval);
-    
-  } catch (error) {
-    console.error('Auth error:', error);
-    showToast('Failed to start auth', 'error');
+    });
+    if (response.ok) {
+      return await response.json();
+    }
+    return null;
+  } catch {
+    return null;
   }
+}
+
+async function loginWithPat() {
+  const input = document.getElementById('pat-input');
+  const token = input.value.trim();
+  const error = document.getElementById('login-error');
+  const btn = document.getElementById('pat-login-btn');
+  
+  if (!token) {
+    error.textContent = 'Please enter a token';
+    error.style.display = 'block';
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+  error.style.display = 'none';
+  
+  const user = await verifyPat(token);
+  
+  if (user && isAuthorized(user)) {
+    state.token = token;
+    state.user = user;
+    localStorage.setItem('gh_token', token);
+    localStorage.setItem('gh_user', JSON.stringify(user));
+    closeLoginModal();
+    renderUserSection();
+    showToast(`Welcome, ${user.login}!`, 'success');
+  } else if (user) {
+    error.textContent = 'Not authorized. Only certain users can publish.';
+    error.style.display = 'block';
+  } else {
+    error.textContent = 'Invalid token';
+    error.style.display = 'block';
+  }
+  
+  btn.disabled = false;
+  btn.textContent = 'Login';
+}
+
+function startOAuthFlow() {
+  openLoginModal();
 }
 
 async function publishPost() {
@@ -515,12 +486,18 @@ function initEditor() {
   const loginBtn = document.getElementById('login-btn');
   const closeModalBtn = document.getElementById('close-modal');
   const closeLoginBtn = document.getElementById('close-login');
+  const patLoginBtn = document.getElementById('pat-login-btn');
   const previewBtn = document.getElementById('preview-btn');
   const publishBtn = document.getElementById('publish-btn');
   const titleInput = document.getElementById('post-title');
   const contentInput = document.getElementById('post-content');
+  const patInput = document.getElementById('pat-input');
   
   loginBtn.addEventListener('click', startOAuthFlow);
+  patLoginBtn.addEventListener('click', loginWithPat);
+  patInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') loginWithPat();
+  });
   
   newPostBtn.addEventListener('click', () => {
     if (state.user) {
@@ -555,14 +532,21 @@ function initEditor() {
   });
 }
 
-function initAuth() {
+async function initAuth() {
   const savedToken = localStorage.getItem('gh_token');
   const savedUser = localStorage.getItem('gh_user');
   
   if (savedToken && savedUser) {
-    state.token = savedToken;
-    state.user = JSON.parse(savedUser);
-    renderUserSection();
+    const user = await verifyPat(savedToken);
+    if (user) {
+      state.token = savedToken;
+      state.user = user;
+      localStorage.setItem('gh_user', JSON.stringify(user));
+      renderUserSection();
+    } else {
+      localStorage.removeItem('gh_token');
+      localStorage.removeItem('gh_user');
+    }
   }
 }
 
@@ -570,9 +554,13 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-initProfile();
-initAuth();
-initEditor();
-window.addEventListener('popstate', render);
-render();
-fetchPosts();
+async function init() {
+  initProfile();
+  await initAuth();
+  initEditor();
+  window.addEventListener('popstate', render);
+  render();
+  fetchPosts();
+}
+
+init();
