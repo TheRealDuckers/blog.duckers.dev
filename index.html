@@ -1,83 +1,704 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Duckers Blog</title>
-  <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/TheRealDuckers/cdn/refs/heads/main/66c85562-34cc-42f9-b3a6-fb22b326065c-removebg-preview.png">
-  <meta name="description"
-        content="The blog of Duckers! Here, I post about the latest tech news, stuff I've been working on and corny jokes." />
-  <meta name="msvalidate.01" content="89A445535282DC8179976A86F14E3146" />
-  <meta name="google-site-verification" content="77caaCU60GdXFjEBSiJJ6t8up2DQ8MhVWV1aQLTr0u4" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Duckers Blog - thoughts and observations on software, technology, and everything in between.">
+  <meta name="author" content="TheRealDuckers">
+  <meta name="robots" content="index, follow">
   
-  <!-- Markdown renderer -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Duckers Blog">
+  <meta property="og:title" content="Duckers Blog">
+  <meta property="og:description" content="Thoughts and observations on software, technology, and everything in between.">
+  <meta property="og:url" content="https://blog.duckers.dev">
+  
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@TheRealDuckers">
+  <meta name="twitter:creator" content="@TheRealDuckers">
+  
+  <title>Duckers Blog</title>
+  
+  <link rel="canonical" href="https://blog.duckers.dev">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦆</text></svg>">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fafaf8">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦆</text></svg>">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="styles.css">
+    body {
+      font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 1.7;
+      color: #1a1a1a;
+      background: #fafaf8;
+      min-height: 100vh;
+    }
 
-  <!-- App -->
-  <script src="script.js" defer></script>
+    @media (min-width: 768px) {
+      body {
+        font-size: 19px;
+      }
+    }
+
+    header {
+      background: #fafaf8;
+      border-bottom: 1px solid #e8e8e5;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 480px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem 1rem;
+      }
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    @media (max-width: 480px) {
+      .profile {
+        flex-direction: column;
+      }
+    }
+
+    .profile img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e8e8e5;
+    }
+
+    .profile-info h1 {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      text-decoration: none;
+      letter-spacing: -0.03em;
+    }
+
+    .profile-info h1:hover {
+      color: #0066cc;
+    }
+
+    .profile-info .bio {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.15rem;
+      line-height: 1.4;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-secondary {
+      background: #f0f0ed;
+      color: #1a1a1a;
+    }
+
+    .btn-secondary:hover {
+      background: #e8e8e5;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #666;
+    }
+
+    .btn-ghost:hover {
+      background: #f0f0ed;
+      color: #1a1a1a;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem 6rem;
+    }
+
+    @media (min-width: 900px) {
+      main {
+        max-width: 720px;
+        padding: 5rem 2rem 8rem;
+      }
+    }
+
+    .posts {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .posts {
+        gap: 3.5rem;
+      }
+    }
+
+    .post {
+      padding-bottom: 3rem;
+      border-bottom: 1px solid #e8e8e5;
+    }
+
+    .post:last-child {
+      border-bottom: none;
+    }
+
+    .post h2 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    @media (min-width: 768px) {
+      .post h2 {
+        font-size: 2rem;
+      }
+    }
+
+    .post h2 a {
+      color: #1a1a1a;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .post h2 a:hover {
+      color: #0066cc;
+    }
+
+    .post-meta {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #888;
+      margin-bottom: 1rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .read-btn {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #0066cc;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .read-btn:hover {
+      color: #004499;
+    }
+
+    .read-btn::after {
+      content: '→';
+      transition: transform 0.15s;
+    }
+
+    .read-btn:hover::after {
+      transform: translateX(3px);
+    }
+
+    .loading, .error {
+      text-align: center;
+      padding: 4rem 1rem;
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      color: #666;
+    }
+
+    .error {
+      color: #cc3333;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid #e8e8e5;
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    footer a {
+      color: #666;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      color: #1a1a1a;
+    }
+
+    .back-link {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #666;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 3rem;
+    }
+
+    .back-link:hover {
+      color: #0066cc;
+    }
+
+    .back-link::before {
+      content: '←';
+      margin-right: 0.5rem;
+    }
+
+    .post-page h1 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 2.25rem;
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      letter-spacing: -0.03em;
+    }
+
+    @media (min-width: 768px) {
+      .post-page h1 {
+        font-size: 2.75rem;
+      }
+    }
+
+    .post-page .post-meta {
+      margin-bottom: 2rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .tag {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #555;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.75rem;
+      background: #f0f0ed;
+      border-radius: 3px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tag:hover {
+      background: #e8e8e5;
+      color: #1a1a1a;
+    }
+
+    .post-content {
+      color: #2a2a2a;
+    }
+
+    .post-content p {
+      margin-bottom: 1.5rem;
+    }
+
+    .post-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .post-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      margin: 2rem 0;
+    }
+
+    .post-content pre {
+      background: #f5f5f2;
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 2rem 0;
+      font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      border: 1px solid #e8e8e5;
+    }
+
+    .post-content code {
+      background: #f5f5f2;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.875em;
+      font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+      border: 1px solid #e8e8e5;
+    }
+
+    .post-content pre code {
+      background: none;
+      padding: 0;
+      border: none;
+    }
+
+    .post-content a {
+      color: #0066cc;
+      text-decoration: underline;
+      text-decoration-color: #b3d4f0;
+      text-underline-offset: 2px;
+    }
+
+    .post-content a:hover {
+      color: #004499;
+      text-decoration-color: #0066cc;
+    }
+
+    .post-content ul, .post-content ol {
+      margin: 1.5rem 0;
+      padding-left: 1.5rem;
+    }
+
+    .post-content li {
+      margin-bottom: 0.6rem;
+    }
+
+    .post-content blockquote {
+      border-left: 3px solid #0066cc;
+      padding: 0.5rem 0 0.5rem 1.5rem;
+      color: #555;
+      margin: 2rem 0;
+      font-style: italic;
+    }
+
+    .post-content h1,
+    .post-content h2,
+    .post-content h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 2.5rem 0 1rem;
+    }
+
+    .post-content h2 {
+      font-size: 1.5rem;
+    }
+
+    .post-content h3 {
+      font-size: 1.25rem;
+    }
+
+    .comments {
+      margin-top: 4rem;
+      padding-top: 3rem;
+      border-top: 1px solid #e8e8e5;
+    }
+
+    .comments h2 {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+      color: #1a1a1a;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 720px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.2s;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e8e8e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h2 {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #1a1a1a;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fafaf8;
+      transition: border-color 0.15s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #0066cc;
+    }
+
+    .form-group textarea {
+      min-height: 300px;
+      resize: vertical;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #999;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .user-info img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
+
+    .user-info span {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1a1a1a;
+      color: #fff;
+      padding: 0.875rem 1.5rem;
+      border-radius: 8px;
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      z-index: 2000;
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: #16a34a;
+    }
+
+    .toast.error {
+      background: #dc2626;
+    }
+
+    .editor-preview {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e8e8e5;
+    }
+
+    .editor-preview h3 {
+      font-family: 'Instrument Sans', -apple-system, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #666;
+    }
+
+    .editor-preview .post-content {
+      background: #fafaf8;
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+  </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="topbar">
-      <a class="brand" href="#/" aria-label="Home" onclick="location.hash='#/'">
-        <div class="brand-logo">🦆</div>
-        <div class="brand-text">
-          <div class="brand-title">Duckers' Blog</div>
-          <div class="brand-sub">the blog of <a href="https://duckers.dev">duckers</a></div>
+  <header>
+    <div class="header-content">
+      <div class="profile">
+        <img id="profile-pic" src="https://github.com/TheRealDuckers.png" alt="Profile">
+        <div class="profile-info">
+          <a href="/" id="profile-name" class="logo">Duckers Blog</a>
+          <p class="bio">Software engineer & internet enjoyer</p>
         </div>
-      </a>
-
-      <div class="top-actions">
-        <button id="themeToggle" class="btn small">Toggle</button>
       </div>
-    </header>
+      <div class="header-actions">
+        <div id="user-section"></div>
+        <button id="new-post-btn" class="btn btn-primary" style="display: none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Post
+        </button>
+      </div>
+    </div>
+  </header>
 
-    <main id="app" class="main"></main>
-<script src="https://giscus.app/client.js"
-        data-repo="TheRealDuckers/blog.duckers.dev"
-        data-repo-id="R_kgDOQ3vjAA"
-        data-category-id="DIC_kwDOQ3vjAM4C01AL"
-        data-mapping="specific"
-        data-term="Comments"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="noborder_light"
-        data-lang="en"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>
-    <footer class="footer">
-      <p>© <span id="year"></span> duckers — All rights reserved. Scraping of this content is prohibited.</p>
-<script>
-  document.getElementById("year").textContent = new Date().getFullYear();
-</script>
+  <main id="app"></main>
 
-    </footer>
+  <footer>
+    <a href="https://duckers.dev">duckers.dev</a>
+  </footer>
+
+  <div id="editor-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>New Post</h2>
+        <button id="close-modal" class="btn btn-ghost">Cancel</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="post-title">Title</label>
+          <input type="text" id="post-title" placeholder="Enter post title...">
+        </div>
+        <div class="form-group">
+          <label for="post-tags">Tags (comma separated)</label>
+          <input type="text" id="post-tags" placeholder="tech, opinion, tutorial...">
+        </div>
+        <div class="form-group">
+          <label for="post-content">Content (Markdown)</label>
+          <textarea id="post-content" placeholder="Write your post in Markdown..."></textarea>
+        </div>
+        <div class="editor-preview" id="editor-preview" style="display: none;">
+          <h3>Preview</h3>
+          <div class="post-content" id="preview-content"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="preview-btn" class="btn btn-secondary">Preview</button>
+        <button id="publish-btn" class="btn btn-primary" disabled>Publish</button>
+      </div>
+    </div>
   </div>
 
+  <div id="toast" class="toast"></div>
 
+  <script src="script.js"></script>
 </body>
-
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KBHMFGQX0H"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-KBHMFGQX0H');
-</script>
 </html>
-
-
-
-
-
-
