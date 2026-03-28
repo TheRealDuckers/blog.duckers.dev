@@ -5,7 +5,7 @@ const AUTHORIZED_USERS = ['TheRealDuckers'];
 
 const PROFILE = {
   name: 'Duckers Blog',
-  bio: 'Software engineer & internet enjoyer',
+  bio: 'Web dev, theatre nerd, singer, actor and musician.',
   avatar: 'https://github.com/TheRealDuckers.png'
 };
 
