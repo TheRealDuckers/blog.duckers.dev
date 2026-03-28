@@ -670,6 +670,24 @@
     <a href="https://duckers.dev">duckers.dev</a>
   </footer>
 
+  <div id="login-modal" class="modal-overlay">
+    <div class="modal" style="max-width: 400px;">
+      <div class="modal-header">
+        <h2>Login with GitHub</h2>
+        <button id="close-login" class="btn btn-ghost">×</button>
+      </div>
+      <div class="modal-body" id="login-body">
+        <p style="font-family: 'Instrument Sans', sans-serif; margin-bottom: 1rem;">Follow these steps:</p>
+        <ol style="font-family: 'Instrument Sans', sans-serif; padding-left: 1.25rem; line-height: 2;">
+          <li>Go to <strong>github.com/login/device</strong></li>
+          <li>Enter code: <strong id="device-code" style="font-family: monospace; background: #f0f0ed; padding: 0.25rem 0.5rem; border-radius: 4px;"></strong></li>
+          <li>Click "Authorize"</li>
+        </ol>
+        <p id="login-status" style="font-family: 'Instrument Sans', sans-serif; margin-top: 1rem; color: #666;">Waiting for authorization...</p>
+      </div>
+    </div>
+  </div>
+
   <div id="editor-modal" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">

@@ -351,15 +351,24 @@ function updatePublishButton() {
   document.getElementById('publish-btn').disabled = !title || !content;
 }
 
+let authInterval = null;
+
+function openLoginModal() {
+  document.getElementById('login-modal').classList.add('active');
+}
+
+function closeLoginModal() {
+  document.getElementById('login-modal').classList.remove('active');
+  if (authInterval) {
+    clearInterval(authInterval);
+    authInterval = null;
+  }
+  document.getElementById('login-status').textContent = 'Waiting for authorization...';
+}
+
 async function startOAuthFlow() {
-  const code = prompt('Go to https://github.com/device and enter this code:\n\nDUCKER-BLOG');
-  
-  if (!code) return;
-  
-  showToast('Authenticating...', 'default');
-  
   try {
-    const response = await fetch('https://github.com/login/device/code', {
+    const codeResponse = await fetch('https://github.com/login/device/code', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -371,49 +380,73 @@ async function startOAuthFlow() {
       })
     });
     
-    const data = await response.json();
+    const codeData = await codeResponse.json();
+    console.log('Device code response:', codeData);
     
-    if (data.device_code && data.user_code) {
-      const userCode = prompt(`Visit https://github.com/device and enter this code:\n\n${data.user_code}\n\nThen click OK.`);
-      
-      if (!userCode) return;
-      
-      const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          client_id: GITHUB_CLIENT_ID,
-          device_code: data.device_code,
-          grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
-        })
-      });
-      
-      const tokenData = await tokenResponse.json();
-      
-      if (tokenData.access_token) {
-        state.token = tokenData.access_token;
-        localStorage.setItem('gh_token', tokenData.access_token);
-        
-        const userResponse = await fetch('https://api.github.com/user', {
+    if (codeData.error) {
+      showToast(codeData.error_description || 'Auth error', 'error');
+      return;
+    }
+    
+    document.getElementById('device-code').textContent = codeData.user_code;
+    document.getElementById('login-status').textContent = 'Waiting for authorization...';
+    openLoginModal();
+    
+    const pollInterval = (codeData.interval || 5) * 1000;
+    
+    authInterval = setInterval(async () => {
+      try {
+        const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+          method: 'POST',
           headers: {
-            'Authorization': `Bearer ${tokenData.access_token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            client_id: GITHUB_CLIENT_ID,
+            device_code: codeData.device_code,
+            grant_type: 'urn:ietf:params:oauth:grant-type:device_code'
+          })
         });
         
-        state.user = await userResponse.json();
-        localStorage.setItem('gh_user', JSON.stringify(state.user));
-        renderUserSection();
-        showToast(`Welcome, ${state.user.login}!`, 'success');
-      } else {
-        showToast('Authentication failed', 'error');
+        const tokenData = await tokenResponse.json();
+        console.log('Token response:', tokenData);
+        
+        if (tokenData.error === 'authorization_pending') {
+          return;
+        }
+        
+        clearInterval(authInterval);
+        authInterval = null;
+        
+        if (tokenData.access_token) {
+          state.token = tokenData.access_token;
+          localStorage.setItem('gh_token', tokenData.access_token);
+          
+          const userResponse = await fetch('https://api.github.com/user', {
+            headers: {
+              'Authorization': `Bearer ${tokenData.access_token}`,
+              'Accept': 'application/vnd.github.v3+json'
+            }
+          });
+          
+          state.user = await userResponse.json();
+          localStorage.setItem('gh_user', JSON.stringify(state.user));
+          closeLoginModal();
+          renderUserSection();
+          showToast(`Welcome, ${state.user.login}!`, 'success');
+        } else {
+          document.getElementById('login-status').textContent = tokenData.error_description || 'Authorization failed';
+          showToast(tokenData.error_description || 'Auth failed', 'error');
+        }
+      } catch (e) {
+        console.error('Poll error:', e);
       }
-    }
+    }, pollInterval);
+    
   } catch (error) {
-    showToast('Authentication error', 'error');
+    console.error('Auth error:', error);
+    showToast('Failed to start auth', 'error');
   }
 }
 
@@ -477,9 +510,11 @@ async function publishPost() {
 
 function initEditor() {
   const modal = document.getElementById('editor-modal');
+  const loginModal = document.getElementById('login-modal');
   const newPostBtn = document.getElementById('new-post-btn');
   const loginBtn = document.getElementById('login-btn');
   const closeModalBtn = document.getElementById('close-modal');
+  const closeLoginBtn = document.getElementById('close-login');
   const previewBtn = document.getElementById('preview-btn');
   const publishBtn = document.getElementById('publish-btn');
   const titleInput = document.getElementById('post-title');
@@ -496,9 +531,14 @@ function initEditor() {
   });
   
   closeModalBtn.addEventListener('click', closeEditorModal);
+  closeLoginBtn.addEventListener('click', closeLoginModal);
   
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeEditorModal();
+  });
+  
+  loginModal.addEventListener('click', (e) => {
+    if (e.target === loginModal) closeLoginModal();
   });
   
   previewBtn.addEventListener('click', togglePreview);
@@ -508,7 +548,10 @@ function initEditor() {
   contentInput.addEventListener('input', updatePublishButton);
   
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeEditorModal();
+    if (e.key === 'Escape') {
+      closeEditorModal();
+      closeLoginModal();
+    }
   });
 }
 
