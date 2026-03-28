@@ -1,6 +1,7 @@
 const OWNER = 'TheRealDuckers';
 const REPO = 'blog.duckers.dev';
-const GITHUB_CLIENT_ID = ' Iv23liTZipusDb4gSobG';
+const GITHUB_CLIENT_ID = 'Iv23liTZipusDb4gSobG';
+const AUTHORIZED_USERS = ['TheRealDuckers'];
 
 const PROFILE = {
   name: 'Duckers Blog',
@@ -150,21 +151,39 @@ function updateSEO(post) {
   }
 }
 
+function isAuthorized(user) {
+  return user && AUTHORIZED_USERS.includes(user.login);
+}
+
 function renderUserSection() {
   const userSection = document.getElementById('user-section');
   const newPostBtn = document.getElementById('new-post-btn');
+  const loginBtn = document.getElementById('login-btn');
   
   if (state.user) {
-    userSection.innerHTML = `
-      <div class="user-info">
-        <img src="${state.user.avatar_url}" alt="${state.user.login}">
-        <span>${state.user.login}</span>
-      </div>
-    `;
-    newPostBtn.style.display = 'inline-flex';
+    if (isAuthorized(state.user)) {
+      userSection.innerHTML = `
+        <div class="user-info">
+          <img src="${state.user.avatar_url}" alt="${state.user.login}">
+          <span>${state.user.login}</span>
+        </div>
+      `;
+      newPostBtn.style.display = 'inline-flex';
+      loginBtn.style.display = 'none';
+    } else {
+      userSection.innerHTML = `
+        <div class="user-info">
+          <img src="${state.user.avatar_url}" alt="${state.user.login}">
+          <span>${state.user.login}</span>
+        </div>
+      `;
+      newPostBtn.style.display = 'none';
+      loginBtn.style.display = 'none';
+    }
   } else {
     userSection.innerHTML = '';
     newPostBtn.style.display = 'none';
+    loginBtn.style.display = 'inline-flex';
   }
 }
 
@@ -399,6 +418,11 @@ async function startOAuthFlow() {
 }
 
 async function publishPost() {
+  if (!isAuthorized(state.user)) {
+    showToast('Not authorized to publish', 'error');
+    return;
+  }
+  
   const title = document.getElementById('post-title').value.trim();
   const tagsInput = document.getElementById('post-tags').value.trim();
   const content = document.getElementById('post-content').value.trim();
@@ -454,11 +478,14 @@ async function publishPost() {
 function initEditor() {
   const modal = document.getElementById('editor-modal');
   const newPostBtn = document.getElementById('new-post-btn');
+  const loginBtn = document.getElementById('login-btn');
   const closeModalBtn = document.getElementById('close-modal');
   const previewBtn = document.getElementById('preview-btn');
   const publishBtn = document.getElementById('publish-btn');
   const titleInput = document.getElementById('post-title');
   const contentInput = document.getElementById('post-content');
+  
+  loginBtn.addEventListener('click', startOAuthFlow);
   
   newPostBtn.addEventListener('click', () => {
     if (state.user) {
